@@ -449,18 +449,8 @@ function rotateMatrix(matrix) {
  *  [2, 9, 5, 9]    => [2, 5, 9, 9]
  *  [-2, 9, 5, -3]  => [-3, -2, 5, 9]
  */
-function sortByAsc(arr) {
-  const result = [...arr];
-  for (let j = 0; j < result.length; j += 1) {
-    for (let i = 0; i < result.length - 1; i += 1) {
-      if (result[i] > result[i + 1]) {
-        const temp = result[i];
-        result[i] = result[i + 1];
-        result[i + 1] = temp;
-      }
-    }
-  }
-  return result;
+function sortByAsc(/* arr */) {
+  throw new Error('Not implemented');
 }
 
 /**
@@ -481,24 +471,77 @@ function sortByAsc(arr) {
  *  'qwerty', 3 => 'qetwry' => 'qtrewy' => 'qrwtey'
  */
 function shuffleChar(str, iterations) {
-  let currentStr = str;
+  const n = str.length;
+  const initialIndexes = [];
 
-  for (let i = 0; i < iterations; i += 1) {
-    let evenChars = '';
-    let oddChars = '';
+  for (let i = 0; i < n; i += 1) {
+    initialIndexes[i] = i;
+  }
 
-    for (let j = 0; j < currentStr.length; j += 1) {
-      if (j % 2 === 0) {
-        evenChars += currentStr[j];
+  let currentIndexes = [];
+  for (let i = 0; i < n; i += 1) {
+    currentIndexes[i] = initialIndexes[i];
+  }
+
+  let cycleLength = 0;
+  const tempIndexes = [];
+  for (let i = 0; i < n; i += 1) {
+    tempIndexes[i] = initialIndexes[i];
+  }
+
+  const foundCycle = false;
+  do {
+    const newIndexes = new Array(n);
+    let evenIndex = 0;
+    let oddIndex = 0;
+
+    for (let i = 0; i < n; i += 1) {
+      if (i % 2 === 0) {
+        newIndexes[evenIndex] = currentIndexes[i];
+        evenIndex += 1;
       } else {
-        oddChars += currentStr[j];
+        newIndexes[n / 2 + oddIndex] = currentIndexes[i];
+        oddIndex += 1;
       }
     }
 
-    currentStr = evenChars + oddChars;
+    currentIndexes = newIndexes;
+    cycleLength += 1;
+
+    let isSame = true;
+    for (let i = 0; i < n; i += 1) {
+      if (currentIndexes[i] !== initialIndexes[i]) {
+        isSame = false;
+        break;
+      }
+    }
+    if (isSame) break;
+  } while (!foundCycle);
+
+  const effectiveIterations = iterations % cycleLength;
+
+  for (let k = 0; k < effectiveIterations; k += 1) {
+    const newIndexes = new Array(n);
+    let evenIndex = 0;
+    let oddIndex = 0;
+
+    for (let i = 0; i < n; i += 1) {
+      if (i % 2 === 0) {
+        newIndexes[evenIndex] = currentIndexes[i];
+        evenIndex += 1;
+      } else {
+        newIndexes[n / 2 + oddIndex] = currentIndexes[i];
+        oddIndex += 1;
+      }
+    }
+    currentIndexes = newIndexes;
   }
 
-  return currentStr;
+  let result = '';
+  for (let i = 0; i < n; i += 1) {
+    result += str[currentIndexes[i]];
+  }
+  return result;
 }
 
 /**
